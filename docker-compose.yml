@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sauna-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - sauna-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      
+    container_name: sauna-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://backend:8080
+    networks:
+      - sauna-network
+
+networks:
+  sauna-network:
+    driver: bridge
