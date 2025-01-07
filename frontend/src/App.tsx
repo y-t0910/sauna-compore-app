@@ -4,7 +4,8 @@ function App() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/saunas`)
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+    fetch(`${apiUrl}/saunas`)
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.error('Error fetching data:', error));
