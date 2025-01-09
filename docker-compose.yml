@@ -4,28 +4,22 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: sauna-backend
     ports:
       - "8080:8080"
-    networks:
-      - sauna-network
+    environment:
+      - GIN_MODE=debug
+      - PORT=8080
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      
-    container_name: sauna-frontend
     ports:
       - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
     depends_on:
       - backend
-    environment:
-      - REACT_APP_API_URL=http://backend:8080
-    networks:
-      - sauna-network
-
-networks:
-  sauna-network:
-    driver: bridge
+    stdin_open: true
+    tty: true

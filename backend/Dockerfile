@@ -1,12 +1,12 @@
 # ベースイメージの指定（Go公式イメージ）
-FROM golang:1.23
+FROM golang:1.20-alpine
 
 # 作業ディレクトリの作成
 WORKDIR /app
 
 # Goモジュールの初期化と依存関係のコピー
 COPY go.mod go.sum ./
-RUN go mod tidy
+RUN go mod download
 
 # アプリケーションのソースコードをコピー
 COPY . .
