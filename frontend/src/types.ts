@@ -14,6 +14,7 @@ export interface LogoutResponse {
   message: string;
 }
 export interface DeleteAccountRequest {
+  email: string;
   password: string;
 }
 export interface LoginRequest {
@@ -61,4 +62,18 @@ export interface UpdateUserResponse {
   success: boolean;
   user?: User;
   message?: string;
+}
+
+export interface SaunaSearchParams {
+  location?: string;
+  minTemp?: number;
+  maxTemp?: number;
+  hasRestArea?: boolean;
+  keyword?: string;
+}
+
+export interface SaunaSearchResponse {
+  success: boolean;
+  data: Sauna[];
+  total: number;
 }

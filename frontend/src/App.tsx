@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Sauna, RegisterFormData, UpdateUserRequest } from './types';
+import { Sauna, RegisterFormData, UpdateUserRequest, SaunaSearchParams } from './types';
+, User
 import RegisterForm from './components/RegisterForm';
 import UpdateAccountForm from './components/UpdateAccountForm';
+import SaunaSearchForm from './components/SaunaSearchForm';
 
 function App() {
   const [data, setData] = useState<Sauna[]>([]);
@@ -103,25 +105,50 @@ function App() {
     }
   };
 
+  const handleSearch = async (searchParams: SaunaSearchParams) => {
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(searchParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== '') {
+          queryParams.append(key, String(value));
+        }
+      });
+
+      const response = await fetch(`http://localhost:8080/saunas/search?${queryParams}`);
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setData(result.data);
+      }
+    } catch (error) {
+      console.error('Error searching saunas:', error);
+      alert('検索に失敗しました');
+    }
+  };
+
   return (
     <div>
       <h1>Sauna List</h1>
+      <SaunaSearchForm onSearch={handleSearch} />
       <RegisterForm onSubmit={handleRegisterSubmit} />
       <ul>
-        {data.map((sauna: Sauna) => (
-          <li key={sauna.id}>
-            {sauna.name} - {sauna.location}
-          </li>
-        ))}
+      {data.map((sauna: Sauna) => (
+        <li key={sauna.id}>
+        {sauna.name} - {sauna.location}
+        </li>
+      ))}
       </ul>
       <button onClick={handleLogout}>Logout</button>
       <button onClick={handleDeleteAccount} style={{ backgroundColor: 'red', color: 'white' }}>
-        退会する
+      退会する
       </button>
       {/* ダミーユーザーデータを使用 */}
       <UpdateAccountForm
-        currentUser={{ id: 1, username: "testuser", email: "test@example.com" }}
-        onUpdate={handleUpdateAccount}
+      currentUser={{ id: 1, username: "testuser", email: "test@example.com" }}
+      onUpdate={handleUpdateAccount}
       />
     </div>
   );

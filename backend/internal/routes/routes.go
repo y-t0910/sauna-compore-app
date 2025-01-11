@@ -14,6 +14,8 @@ func SetupRoutes(router *gin.Engine) {
 	router.POST("/logout", handleLogout)
 
 	// 退会エンドポイントの追加
+	// 検索エンドポイントの追加
+	router.GET("/search", handleSearch)
 	router.DELETE("/unregister", handleUnregister)
 
 	// アカウント修正エンドポイントの追加
@@ -47,5 +49,12 @@ func handleUnregister(c *gin.Context) {
 	// TODO: Implement user unregistration logic
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Unregistration endpoint",
+	})
+}
+
+func handleSearch(c *gin.Context) {
+	// TODO: Implement search logic
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Search endpoint",
 	})
 }
