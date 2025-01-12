@@ -77,3 +77,24 @@ export interface SaunaSearchResponse {
   data: Sauna[];
   total: number;
 }
+
+export interface Review {
+  id: number;
+  saunaId: number;
+  userId: number;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export interface CreateReviewRequest {
+  saunaId: number;
+  rating: number;
+  comment: string;
+}
+
+export interface ReviewResponse {
+  success: boolean;
+  data?: Review;
+  error?: string;
+}

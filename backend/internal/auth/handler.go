@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"sauna-compore-app/internal/database"
-	"sauna-compore-app/internal/models"
+	"github.com/y-t0910/sauna-compore-app/backend/internal/database"
+	"github.com/y-t0910/sauna-compore-app/backend/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"

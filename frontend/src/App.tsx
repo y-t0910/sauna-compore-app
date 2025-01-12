@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Sauna, RegisterFormData, UpdateUserRequest, SaunaSearchParams } from './types';
-, User
+import { Sauna, RegisterFormData, UpdateUserRequest, SaunaSearchParams, CreateReviewRequest } from './types';
 import RegisterForm from './components/RegisterForm';
 import UpdateAccountForm from './components/UpdateAccountForm';
 import SaunaSearchForm from './components/SaunaSearchForm';
+import ReviewForm from './components/ReviewForm';
 
 function App() {
   const [data, setData] = useState<Sauna[]>([]);
@@ -129,6 +129,31 @@ function App() {
     }
   };
 
+  const handleReviewSubmit = async (review: CreateReviewRequest) => {
+    try {
+      const response = await fetch('http://localhost:8080/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(review),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        // TODO: レビュー一覧を更新
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      throw error;
+    }
+  };
+
   return (
     <div>
       <h1>Sauna List</h1>
@@ -136,9 +161,10 @@ function App() {
       <RegisterForm onSubmit={handleRegisterSubmit} />
       <ul>
       {data.map((sauna: Sauna) => (
-        <li key={sauna.id}>
-        {sauna.name} - {sauna.location}
-        </li>
+        <div key={sauna.id}>
+          <li>{sauna.name} - {sauna.location}</li>
+          <ReviewForm saunaId={sauna.id} onSubmit={handleReviewSubmit} />
+        </div>
       ))}
       </ul>
       <button onClick={handleLogout}>Logout</button>

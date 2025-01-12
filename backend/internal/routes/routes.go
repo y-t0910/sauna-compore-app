@@ -11,10 +11,7 @@ func SetupRoutes(router *gin.Engine) {
 	router.POST("/register", handleRegister)
 
 	// ログアウトエンドポイントの追加
-	router.POST("/logout", handleLogout)
-
-	// 退会エンドポイントの追加
-	// 検索エンドポイントの追加
+	router.DELETE("/unregister", handleUnregister)
 	router.GET("/search", handleSearch)
 	router.DELETE("/unregister", handleUnregister)
 
