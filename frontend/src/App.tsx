@@ -4,9 +4,22 @@ import RegisterForm from './components/RegisterForm';
 import UpdateAccountForm from './components/UpdateAccountForm';
 import SaunaSearchForm from './components/SaunaSearchForm';
 import ReviewForm from './components/ReviewForm';
+import FacilityDisplay from './components/FacilityDisplay';
+import BookmarkButton from './components/BookmarkButton';
+
+interface UpdateAccountFormProps {
+  currentUser: {
+    id: number;
+    username: string;
+    email: string;
+  };
+  onUpdate: (updateData: UpdateUserRequest) => Promise<void>;
+}
 
 function App() {
   const [data, setData] = useState<Sauna[]>([]);
+  const [facilityData, setFacilityData] = useState<Record<number, SaunaFacility>>({});
+  const [bookmarks, setBookmarks] = useState<Set<number>>(new Set());
 
   const handleRegisterSubmit = (formData: RegisterFormData) => {
     // TODO: Implement form submission logic
@@ -154,6 +167,56 @@ function App() {
     }
   };
 
+  const fetchFacilityData = async (saunaId: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/facilities/sauna/${saunaId}`);
+      if (!response.ok) throw new Error('Failed to fetch facility data');
+      const result = await response.json();
+      if (result.success) {
+        setFacilityData(prev => ({...prev, [saunaId]: result.data}));
+      }
+    } catch (error) {
+      console.error('Error fetching facility data:', error);
+    }
+  };
+
+  const handleBookmark = async (saunaId: number) => {
+    try {
+      if (bookmarks.has(saunaId)) {
+        // TODO: 削除APIの呼び出し
+        bookmarks.delete(saunaId);
+      } else {
+        const response = await fetch('http://localhost:8080/bookmarks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ saunaId }),
+        });
+        
+        if (!response.ok) throw new Error('Failed to bookmark');
+        bookmarks.add(saunaId);
+      }
+      setBookmarks(new Set(bookmarks));
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
+
+  const handleShareBookmark = async (saunaId: number, targetUserId: number, message: string) => {
+    try {
+      const response = await fetch('http://localhost:8080/bookmarks/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ saunaId, targetUserId, message }),
+      });
+
+      if (!response.ok) throw new Error('Failed to share bookmark');
+      alert('ブックマークを共有しました！');
+    } catch (error) {
+      console.error('Error sharing bookmark:', error);
+      alert('共有に失敗しました');
+    }
+  };
+
   return (
     <div>
       <h1>Sauna List</h1>
@@ -163,7 +226,19 @@ function App() {
       {data.map((sauna: Sauna) => (
         <div key={sauna.id}>
           <li>{sauna.name} - {sauna.location}</li>
-          <ReviewForm saunaId={sauna.id} onSubmit={handleReviewSubmit} />
+          {facilityData[sauna.id] && (
+            <FacilityDisplay facility={facilityData[sauna.id]} />
+          )}
+          <button onClick={() => fetchFacilityData(sauna.id)}>
+            施設情報を表示
+          </button>
+          <ReviewForm saunaId={sauna.id} onSubmit={(reviewData) => handleReviewSubmit({ ...reviewData, saunaId: sauna.id })} />
+          <BookmarkButton
+            saunaId={sauna.id}
+            isBookmarked={bookmarks.has(sauna.id)}
+            onBookmark={handleBookmark}
+            onShare={handleShareBookmark}
+          />
         </div>
       ))}
       </ul>

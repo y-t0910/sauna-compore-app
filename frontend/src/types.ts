@@ -49,6 +49,7 @@ export interface RegisterResponse {
 
 export interface DeleteAccountResponse {
   success: boolean;
+  user?: User;
   message: string;
 }
 
@@ -97,4 +98,48 @@ export interface ReviewResponse {
   success: boolean;
   data?: Review;
   error?: string;
+}
+
+export interface SaunaFacility {
+  id: number;
+  saunaId: number;
+  temperatureRoom: number;
+  waterBath: number;
+  restArea: boolean;
+  facilities: string[];
+  amenities: string[];
+  businessHours: string;
+  price: number;
+  description: string;
+}
+
+export interface UpdateFacilityRequest {
+  temperatureRoom?: number;
+  waterBath?: number;
+  restArea?: boolean;
+  facilities?: string[];
+  amenities?: string[];
+  businessHours?: string;
+  price?: number;
+  description?: string;
+}
+
+export interface Bookmark {
+  id: number;
+  userId: number;
+  saunaId: number;
+  note?: string;
+  createdAt: string;
+}
+
+export interface ShareBookmarkRequest {
+  saunaId: number;
+  targetUserId: number;
+  message?: string;
+}
+
+export interface BookmarkResponse {
+  success: boolean;
+  data?: Bookmark;
+  message?: string;
 }
