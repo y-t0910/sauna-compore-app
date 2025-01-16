@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"backend/internal/routes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -8,8 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-
-	"sauna-compore-app/backend/internal/routes"
 )
 
 func TestReviewRoutes(t *testing.T) {

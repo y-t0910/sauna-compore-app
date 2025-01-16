@@ -10,6 +10,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type Handlers struct {
+	// Add any required fields for your handlers
+}
+
+func (h *Handlers) Signup(c *gin.Context) {
+	// Implement signup logic for testing
+}
+
+func (h *Handlers) Login(c *gin.Context) {
+	// Implement login logic for testing
+}
+
+var handlers *Handlers = &Handlers{} // Initialize handlers
+
 func setupTestRouter() *gin.Engine {
 	router := gin.Default()
 	router.POST("/signup", handlers.Signup)

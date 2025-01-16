@@ -34,8 +34,8 @@ func getAllFacilities(c *gin.Context) {
 }
 
 func getFacility(c *gin.Context) {
-	id := c.Param("id")
-	// TODO: Implement database lookup
+	// TODO: Implement database lookup using the ID
+	_ = c.Param("id") // Temporarily ignore the ID until database implementation
 	facility := Facility{}
 	c.JSON(http.StatusOK, facility)
 }
@@ -51,7 +51,7 @@ func createFacility(c *gin.Context) {
 }
 
 func updateFacility(c *gin.Context) {
-	id := c.Param("id")
+	_ = c.Param("id") // Temporarily ignore the ID until database implementation
 	var facility Facility
 	if err := c.ShouldBindJSON(&facility); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -62,7 +62,7 @@ func updateFacility(c *gin.Context) {
 }
 
 func deleteFacility(c *gin.Context) {
-	id := c.Param("id")
+	_ = c.Param("id") // Temporarily ignore the ID until database implementation
 	// TODO: Implement database deletion
 	c.JSON(http.StatusOK, gin.H{"message": "Facility deleted"})
 }

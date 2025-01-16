@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"sauna-compore-app/backend/internal/routes"
+	"backend/internal/routes"
 )
 
 func TestCreateBookmark(t *testing.T) {
