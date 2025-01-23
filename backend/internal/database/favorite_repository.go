@@ -59,7 +59,10 @@ func (r *FavoriteRepository) List(ctx context.Context, userID int64) ([]Favorite
 	`
 	var favorites []Favorite
 	err := r.db.SelectContext(ctx, &favorites, query, userID)
-	return favorites, err
+	if err != nil {
+		return nil, err
+	}
+	return favorites, nil
 }
 
 func (r *FavoriteRepository) Exists(ctx context.Context, userID, saunaID int64) (bool, error) {

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -17,6 +18,10 @@ type Config struct {
 
 type Database struct {
 	*sql.DB
+}
+
+func (db Database) SelectContext(ctx context.Context, favorite *[]Favorite, query string, userID int64) any {
+	panic("unimplemented")
 }
 
 // NewDB creates a new database connection
