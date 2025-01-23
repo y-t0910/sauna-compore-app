@@ -7,7 +7,14 @@ services:
       - "8080:8080"
     environment:
       - GIN_MODE=debug
-      - PORT=8080
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=sauna_db
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
     image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
@@ -33,6 +40,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/internal/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

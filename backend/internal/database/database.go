@@ -1,9 +1,8 @@
 package database
 
 import (
+	"backend/internal/models"
 	"log"
-
-	"sauna-compore-app/backend/internal/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

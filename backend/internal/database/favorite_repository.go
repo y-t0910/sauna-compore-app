@@ -58,9 +58,8 @@ func (r *FavoriteRepository) List(ctx context.Context, userID int64) ([]Favorite
 		ORDER BY created_at DESC
 	`
 	var favorites []Favorite
-	err := r.db.SelectContext(ctx, &favorites, query, userID)
-	if err != nil {
-		return nil, err
+	if err := r.db.SelectContext(ctx, &favorites, query, userID); err != nil {
+		return nil, err.(error)
 	}
 	return favorites, nil
 }
