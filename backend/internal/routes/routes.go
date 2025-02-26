@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"github.com/USER/sauna-compore-app/internal/websocket"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +18,13 @@ func SetupRoutes(router *gin.Engine) {
 
 	// アカウント修正エンドポイントの追加
 	router.PUT("/account", handleUpdateAccount)
+}
+
+func RegisterRoutes(r *gin.Engine) {
+	// 既存のルート
+
+	// WebSocketルートを追加
+	r.GET("/ws", websocket.HandleWebSocket)
 }
 
 func handleUpdateAccount(c *gin.Context) {
