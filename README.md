@@ -2,7 +2,7 @@
 
 テクノロジースタック
 フロントエンド: TypeScript×React
-インタビュー: Go
+バックエンド: Go
 データベース: MySQL
 インフラ: Docker
 
