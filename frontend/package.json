@@ -5,11 +5,11 @@
   "dependencies": {
     "@babel/core": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
+    "@testing-library/jest-dom": "^5.17.0",
     "babel-preset-react-app": "^10.0.1",
     "cra-template-typescript": "1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@testing-library/jest-dom": "^5.17.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^4.2.4"
@@ -39,20 +39,27 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.5.1",
-    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/node": "^16.18.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@types/testing-library__jest-dom": "^5.14.9",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
-    "jest": "^27.5.1"
+    "autoprefixer": "^10.4.13",
+    "jest": "^27.5.1",
+    "jest-environment-jsdom": "^29.7.0",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.7"
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(@testing-library)/)"
-    ]
+      "node_modules/(?!(@testing-library|react)/)"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/styleMock.js"
+    }
   }
 }

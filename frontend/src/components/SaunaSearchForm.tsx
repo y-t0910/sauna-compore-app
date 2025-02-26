@@ -1,66 +1,80 @@
 import React, { useState } from 'react';
+import { SaunaSearchParams } from '../types';
 
-interface SearchFormProps {
-    onSearch: (searchParams: SearchParams) => void;
+interface Props {
+  onSearch: (params: SaunaSearchParams) => void;
 }
 
-interface SearchParams {
-    keyword: string;
-    area?: string;
-    priceRange?: string;
-}
+const SaunaSearchForm: React.FC<Props> = ({ onSearch }) => {
+  const [searchParams, setSearchParams] = useState<SaunaSearchParams>({
+    location: '',
+    minTemp: undefined,
+    maxTemp: undefined,
+    hasRestArea: false,
+    keyword: ''
+  });
 
-const SaunaSearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
-    const [searchParams, setSearchParams] = useState<SearchParams>({
-        keyword: '',
-        area: '',
-        priceRange: '',
-    });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(searchParams);
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSearch(searchParams);
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setSearchParams(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="search-form">
-            <div>
-                <input
-                    type="text"
-                    name="keyword"
-                    placeholder="サウナ名を検索"
-                    value={searchParams.keyword}
-                    onChange={handleInputChange}
-                />
-            </div>
-            <div>
-                <select name="area" value={searchParams.area} onChange={handleInputChange}>
-                    <option value="">エリアを選択</option>
-                    <option value="tokyo">東京</option>
-                    <option value="osaka">大阪</option>
-                    <option value="fukuoka">福岡</option>
-                </select>
-            </div>
-            <div>
-                <select name="priceRange" value={searchParams.priceRange} onChange={handleInputChange}>
-                    <option value="">価格帯を選択</option>
-                    <option value="0-1000">1000円以下</option>
-                    <option value="1001-2000">1001円〜2000円</option>
-                    <option value="2001-3000">2001円〜3000円</option>
-                    <option value="3001">3001円以上</option>
-                </select>
-            </div>
-            <button type="submit">検索</button>
-        </form>
-    );
+  return (
+    <form onSubmit={handleSubmit} className="mb-4 p-4 bg-gray-100 rounded-lg">
+      <div className="mb-2">
+        <input
+          type="text"
+          placeholder="キーワード検索"
+          value={searchParams.keyword || ''}
+          onChange={(e) => setSearchParams({...searchParams, keyword: e.target.value})}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <div className="mb-2">
+        <input
+          type="text"
+          placeholder="場所"
+          value={searchParams.location || ''}
+          onChange={(e) => setSearchParams({...searchParams, location: e.target.value})}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+      <div className="flex mb-2">
+        <div className="mr-2">
+          <label className="block text-sm">最低温度</label>
+          <input
+            type="number"
+            placeholder="最低温度"
+            value={searchParams.minTemp || ''}
+            onChange={(e) => setSearchParams({...searchParams, minTemp: Number(e.target.value) || undefined})}
+            className="p-2 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block text-sm">最高温度</label>
+          <input
+            type="number"
+            placeholder="最高温度"
+            value={searchParams.maxTemp || ''}
+            onChange={(e) => setSearchParams({...searchParams, maxTemp: Number(e.target.value) || undefined})}
+            className="p-2 border rounded"
+          />
+        </div>
+      </div>
+      <div className="mb-2">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={searchParams.hasRestArea || false}
+            onChange={(e) => setSearchParams({...searchParams, hasRestArea: e.target.checked})}
+            className="mr-2"
+          />
+          休憩スペースあり
+        </label>
+      </div>
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">検索</button>
+    </form>
+  );
 };
 
 export default SaunaSearchForm;

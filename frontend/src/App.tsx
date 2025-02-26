@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Sauna, RegisterFormData, UpdateUserRequest, SaunaSearchParams, CreateReviewRequest } from './types';
+import { Sauna, RegisterFormData, UpdateUserRequest, SaunaSearchParams, CreateReviewRequest, SaunaFacility } from './types';
 import RegisterForm from './components/RegisterForm';
 import UpdateAccountForm from './components/UpdateAccountForm';
 import SaunaSearchForm from './components/SaunaSearchForm';

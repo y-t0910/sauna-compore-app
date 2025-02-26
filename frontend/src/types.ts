@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface APIResponse<T> {
   success: boolean;
   data: T;
@@ -143,3 +145,35 @@ export interface BookmarkResponse {
   data?: Bookmark;
   message?: string;
 }
+
+export interface RegisterFormData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+
+export interface FacilityDisplayProps {
+  facility: SaunaFacility;
+}
+
+const FacilityDisplay = ({ facility }: FacilityDisplayProps) => {
+ 
+  return null;
+};
+
+
+export interface BookmarkButtonProps {
+  isBookmarked: boolean;
+  onBookmark: () => Promise<void>;
+  onShare: (targetUserId: number, message: string) => Promise<void>;
+}
+
+export interface BookmarkButtonProps {
+  isBookmarked: boolean;
+  onBookmark: () => Promise<void>;
+  onShare: (targetUserId: number, message: string) => Promise<void>;
+}
+
+const BookmarkButton: React.FC<BookmarkButtonProps> = ({ isBookmarked, onBookmark, onShare }) => {
+  return null; // Replace with actual JSX later

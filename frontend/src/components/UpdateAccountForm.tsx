@@ -1,70 +1,80 @@
-import { useState, FormEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
+import { UpdateUserRequest } from '../types';
 
-interface UpdateAccountFormProps {
-    initialData?: {
-        username: string;
-        email: string;
-    };
-    onSubmit: (data: { username: string; email: string }) => void;
+interface Props {
+  currentUser: {
+    id: number;
+    username: string;
+    email: string;
+  };
+  onUpdate: (data: UpdateUserRequest) => Promise<void>;
 }
 
-const UpdateAccountForm = ({ initialData, onSubmit }: UpdateAccountFormProps) => {
-    const [formData, setFormData] = useState({
-        username: initialData?.username || '',
-        email: initialData?.email || '',
-    });
+const UpdateAccountForm: React.FC<Props> = ({ currentUser, onUpdate }) => {
+  const [formData, setFormData] = useState<UpdateUserRequest>({
+    username: currentUser.username,
+    email: currentUser.email,
+    password: '',
+  });
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      await onUpdate(formData);
+      alert('アカウント情報を更新しました');
+    } catch (error) {
+      alert('更新に失敗しました');
+    }
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+  return (
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, margin: '0 auto' }}>
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        アカウント情報の修正
+      </Typography>
+      
+      <TextField
+        fullWidth
+        label="ユーザーネーム"
+        name="username"
+        value={formData.username}
+        onChange={(e) => setFormData({...formData, username: e.target.value})}
+        margin="normal"
+        required
+      />
 
-    return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, margin: '0 auto' }}>
-            <Typography variant="h5" sx={{ mb: 3 }}>
-                アカウント情報の更新
-            </Typography>
-            
-            <TextField
-                fullWidth
-                label="ユーザーネーム"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                margin="normal"
-                required
-            />
+      <TextField
+        fullWidth
+        label="メールアドレス"
+        name="email"
+        type="email"
+        value={formData.email}
+        onChange={(e) => setFormData({...formData, email: e.target.value})}
+        margin="normal"
+        required
+      />
 
-            <TextField
-                fullWidth
-                label="メールアドレス"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                margin="normal"
-                required
-            />
+      <TextField
+        fullWidth
+        label="新しいパスワード（変更する場合のみ）"
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={(e) => setFormData({...formData, password: e.target.value})}
+        margin="normal"
+      />
 
-            <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                sx={{ mt: 3 }}
-            >
-                更新する
-            </Button>
-        </Box>
-    );
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        sx={{ mt: 3 }}
+      >
+        更新する
+      </Button>
+    </Box>
+  );
 };
 
 export default UpdateAccountForm;
