@@ -1,10 +1,8 @@
 package routes
 
 import (
+	"backend/internal/websocket"
 	"net/http"
-
-	"sauna-compore-app/backend/internal/auth"
-	"sauna-compore-app/backend/internal/websocket"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,9 +11,9 @@ func RegisterRoutes(r *gin.Engine) {
 	// APIエンドポイント
 	api := r.Group("/api")
 	{
-		api.POST("/login", auth.Login)
-		api.POST("/register", auth.Register)
-		api.DELETE("/unregister", auth.Unregister)
+		api.POST("/login", handleLogin)
+		api.POST("/register", handleRegister)
+		api.DELETE("/unregister", handleUnregister)
 		// 他のAPIエンドポイント
 	}
 
@@ -27,6 +25,13 @@ func handleUpdateAccount(c *gin.Context) {
 	// TODO: Implement account update logic
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Account update endpoint",
+	})
+}
+
+func handleLogin(c *gin.Context) {
+	// TODO: Implement user login logic
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login endpoint",
 	})
 }
 
