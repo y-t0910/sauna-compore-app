@@ -3,27 +3,23 @@ package routes
 import (
 	"net/http"
 
-	"github.com/USER/sauna-compore-app/internal/websocket"
+	"sauna-compore-app/backend/internal/auth"
+	"sauna-compore-app/backend/internal/websocket"
+
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine) {
-	// 登録エンドポイントの追加
-	router.POST("/register", handleRegister)
-
-	// ログアウトエンドポイントの追加
-	router.DELETE("/unregister", handleUnregister)
-	router.GET("/search", handleSearch)
-	router.DELETE("/unregister", handleUnregister)
-
-	// アカウント修正エンドポイントの追加
-	router.PUT("/account", handleUpdateAccount)
-}
-
 func RegisterRoutes(r *gin.Engine) {
-	// 既存のルート
+	// APIエンドポイント
+	api := r.Group("/api")
+	{
+		api.POST("/login", auth.Login)
+		api.POST("/register", auth.Register)
+		api.DELETE("/unregister", auth.Unregister)
+		// 他のAPIエンドポイント
+	}
 
-	// WebSocketルートを追加
+	// WebSocketエンドポイント
 	r.GET("/ws", websocket.HandleWebSocket)
 }
 
