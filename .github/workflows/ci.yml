@@ -59,3 +59,112 @@ jobs:
           DB_PASSWORD: postgres
           DB_NAME: sauna_db_test
         run: go test -v ./...
+
+  # 以下にデプロイジョブを追加
+  deploy-backend:
+    needs: [test-backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      
+      - name: Build backend
+        working-directory: backend
+        run: |
+          go mod download
+          GOOS=linux GOARCH=amd64 go build -o sauna-app cmd/main.go
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+      
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          
+          # アプリのアップロード
+          scp -i private_key.pem -o StrictHostKeyChecking=no ./backend/sauna-app ec2-user@${EC2_HOST}:~/sauna-app
+          
+          # 環境変数設定ファイルの転送
+          echo "DB_HOST=${{ secrets.DB_HOST }}" > .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          scp -i private_key.pem -o StrictHostKeyChecking=no .env ec2-user@${EC2_HOST}:~/.env
+          
+          # サービス再起動
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ec2-user@${EC2_HOST} "
+            sudo mv ~/sauna-app /usr/local/bin/sauna-app
+            sudo chmod +x /usr/local/bin/sauna-app
+            
+            # systemdサービスファイルの作成
+            sudo tee /etc/systemd/system/sauna-app.service > /dev/null << 'EOF'
+[Unit]
+Description=Sauna Compore Application
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+EnvironmentFile=/home/ec2-user/.env
+ExecStart=/usr/local/bin/sauna-app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+            
+            sudo systemctl daemon-reload
+            sudo systemctl enable sauna-app
+            sudo systemctl restart sauna-app
+          "
+
+  deploy-frontend:
+    needs: [test-frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install and build frontend
+        working-directory: frontend
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_WS_URL: ${{ secrets.REACT_APP_WS_URL }}
+        run: |
+          npm ci
+          npm run build
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+      
+      - name: Deploy to S3
+        working-directory: frontend
+        run: |
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+      
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
