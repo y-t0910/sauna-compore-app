@@ -1,50 +1,52 @@
-version: '3.8'
-
 services:
   backend:
-    image: ghcr.io/${GITHUB_REPOSITORY}/backend:latest
+    build: 
+      context: ./backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=sauna_user
+      - DB_PASSWORD=sauna_password
+      - DB_NAME=sauna_db
     ports:
       - "8080:8080"
-    environment:
-      - GIN_MODE=debug
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=sauna_db
-    depends_on:
-      db:
-        condition: service_healthy
+    networks:
+      - sauna-network
 
   frontend:
-    image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
+    build:
+      context: ./frontend
+    restart: always
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://localhost:8080
-      - CHOKIDAR_USEPOLLING=true
-      - WDS_SOCKET_PORT=0
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8080/ws
     depends_on:
       - backend
-    stdin_open: true
-    tty: true
+    networks:
+      - sauna-network
 
   db:
-    image: postgres:13-alpine
+    image: mysql:8.0
+    restart: always
     environment:
-      POSTGRES_DB: sauna_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: sauna_db
+      MYSQL_USER: sauna_user
+      MYSQL_PASSWORD: sauna_password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backend/internal/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - mysql-data:/var/lib/mysql
+    networks:
+      - sauna-network
+
+networks:
+  sauna-network:
 
 volumes:
-  postgres_data:
+  mysql-data:
