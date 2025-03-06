@@ -12,16 +12,16 @@
     "react": "latest",
     "react-dom": "latest",
     "react-scripts": "5.0.1",
+    "socket.io-client": "^4.7.2",
     "typescript": "^4.9.5",
-    "web-vitals": "^4.2.4",
-    "socket.io-client": "^4.7.2"
+    "web-vitals": "^4.2.4"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "react-scripts test",
+    "test": "jest --setupFilesAfterEnv='./src/setupTests.ts'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

@@ -1,8 +1,11 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import App from './App';
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import '@testing-library/jest-dom/extend-expect';
+
+// The custom matchers are already included by @testing-library/jest-dom/extend-expect
+export {};
 
 // すべての依存コンポーネントをモック化
 jest.mock('./components/RegisterForm', () => {
@@ -66,7 +69,8 @@ describe('App Component', () => {
   test('renders Sauna List heading', () => {
     render(<App />);
     const headingElement = screen.getByText(/Sauna List/i);
-    expect(headingElement).toBeInTheDocument();
+    // 型アサーションを使用
+    (expect(headingElement) as any).toBeInTheDocument();
   });
 
   test('fetches and displays saunas', async () => {

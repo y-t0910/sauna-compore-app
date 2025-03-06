@@ -158,7 +158,7 @@ export interface FacilityDisplayProps {
 }
 
 const FacilityDisplay = ({ facility }: FacilityDisplayProps) => {
- 
+
   return null;
 };
 
@@ -177,3 +177,4 @@ export interface BookmarkButtonProps {
 
 const BookmarkButton: React.FC<BookmarkButtonProps> = ({ isBookmarked, onBookmark, onShare }) => {
   return null; // Replace with actual JSX later
+};
