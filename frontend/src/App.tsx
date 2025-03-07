@@ -7,6 +7,7 @@ import ReviewForm from './components/ReviewForm';
 import FacilityDisplay from './components/FacilityDisplay';
 import BookmarkButton from './components/BookmarkButton';
 
+
 interface UpdateAccountFormProps {
   currentUser: {
     id: number;
@@ -219,6 +220,7 @@ function App() {
 
   return (
     <div>
+      <MobileNav />
       <h1>Sauna List</h1>
       <SaunaSearchForm onSearch={handleSearch} />
       <RegisterForm onSubmit={handleRegisterSubmit} />
