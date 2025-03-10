@@ -7,6 +7,19 @@ import ReviewForm from './components/ReviewForm';
 import FacilityDisplay from './components/FacilityDisplay';
 import BookmarkButton from './components/BookmarkButton';
 
+// Simple mobile navigation component
+const MobileNav = () => {
+  return (
+    <nav className="mobile-navigation">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/account">My Account</a></li>
+      </ul>
+    </nav>
+  );
+};
+
 
 interface UpdateAccountFormProps {
   currentUser: {
